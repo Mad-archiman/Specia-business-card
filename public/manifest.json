@@ -1,0 +1,10 @@
+{
+  "name": "SPECIA 명함",
+  "short_name": "SPECIA 명함",
+  "description": "SPECIA WebAR 명함 - 3D 명함을 체험해보세요",
+  "start_url": "/",
+  "display": "fullscreen",
+  "orientation": "portrait-primary",
+  "theme_color": "#0a0a0f",
+  "background_color": "#0a0a0f"
+}
