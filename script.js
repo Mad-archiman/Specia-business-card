@@ -15,6 +15,7 @@ const CONFIG = {
   arServiceUrl: 'https://specia-ar-service.vercel.app/',
   webxrArPage: 'webxr-ar.html',
   longPressMs: 3000,
+  warmupMs: 1500,
 };
 
 const modelViewer = document.getElementById('model-viewer');
@@ -26,13 +27,18 @@ btnHomepage.href = CONFIG.homepage;
 btnVideo.href = CONFIG.promoVideo;
 document.getElementById('btn-webxr-ar').href = CONFIG.arServiceUrl;
 
-// 모델 3초 길게 누르면 webxr-ar 페이지로 이동
+// 모델 제자리 터치: 1.5초 경과 후 카운트다운 시작, 총 3초 후 webxr-ar 이동
 let longPressTimer = null;
+let warmupTimer = null;
 let longPressCountdownInterval = null;
 const longPressSpinner = document.getElementById('long-press-spinner');
 const longPressCountdownEl = document.getElementById('long-press-countdown');
 
 function clearLongPress() {
+  if (warmupTimer) {
+    clearTimeout(warmupTimer);
+    warmupTimer = null;
+  }
   if (longPressCountdownInterval) {
     clearInterval(longPressCountdownInterval);
     longPressCountdownInterval = null;
@@ -44,8 +50,8 @@ function clearLongPress() {
   if (longPressSpinner) longPressSpinner.classList.remove('is-active');
   if (longPressCountdownEl) longPressCountdownEl.textContent = '3';
 }
-function startLongPress() {
-  clearLongPress();
+
+function startCountdownAndNavigate() {
   if (longPressSpinner) longPressSpinner.classList.add('is-active');
   if (longPressCountdownEl) longPressCountdownEl.textContent = '3';
   const durationMs = CONFIG.longPressMs;
@@ -69,6 +75,14 @@ function startLongPress() {
     if (longPressCountdownEl) longPressCountdownEl.textContent = '3';
     window.location.href = CONFIG.webxrArPage;
   }, durationMs);
+}
+
+function startLongPress() {
+  clearLongPress();
+  warmupTimer = setTimeout(() => {
+    warmupTimer = null;
+    startCountdownAndNavigate();
+  }, CONFIG.warmupMs);
 }
 modelViewer.addEventListener('touchstart', () => startLongPress(), { passive: true });
 modelViewer.addEventListener('touchend', clearLongPress, { passive: true });
