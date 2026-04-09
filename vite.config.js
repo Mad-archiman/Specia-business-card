@@ -17,6 +17,7 @@ export default defineConfig({
       input: {
         main: path.resolve(__dirname, 'index.html'),
         'webxr-ar': path.resolve(__dirname, 'webxr-ar.html'),
+        notice: path.resolve(__dirname, 'notice.html'),
       },
     },
   },

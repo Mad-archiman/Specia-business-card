@@ -21,11 +21,22 @@ const CONFIG = {
 const modelViewer = document.getElementById('model-viewer');
 const btnHomepage = document.getElementById('btn-homepage');
 const btnVideo = document.getElementById('btn-video');
+const noticeFloat = document.getElementById('notice-float');
+const noticeFloatClose = document.getElementById('notice-float-close');
 
 // 퀵 액션 버튼 링크 설정
 btnHomepage.href = CONFIG.homepage;
 btnVideo.href = CONFIG.promoVideo;
 document.getElementById('btn-webxr-ar').href = CONFIG.arServiceUrl;
+
+// 메인 공지 플로팅 닫기
+if (noticeFloat && noticeFloatClose) {
+  noticeFloatClose.addEventListener('click', (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    noticeFloat.style.display = 'none';
+  });
+}
 
 // 모델 제자리 터치: 1.5초 경과 후 카운트다운 시작, 총 3초 후 webxr-ar 이동
 let longPressTimer = null;
