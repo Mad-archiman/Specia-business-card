@@ -10,7 +10,7 @@ export default defineConfig({
   server: {
     https: true,
     host: true,
-    port: 5173,
+    port: 3000,
   },
   build: {
     rollupOptions: {

@@ -14,6 +14,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="auth.css">
   <!-- Google model-viewer -->
   <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
 </head>
@@ -52,13 +53,22 @@
     </div>
 
     <!-- 플로팅 공지사항 -->
-    <aside class="notice-float" id="notice-float" role="status" aria-live="polite">
-      <a class="notice-float__link" href="notice.html">
-        <span class="notice-float__badge" aria-hidden="true">공지</span>
-        <span class="notice-float__text">공지사항을 확인해주세요</span>
-        <span class="notice-float__chev" aria-hidden="true">›</span>
-      </a>
-      <button class="notice-float__close" id="notice-float-close" type="button" aria-label="공지 닫기">×</button>
+    <aside class="notice-float" id="notice-float" role="dialog" aria-label="공지사항">
+      <div class="notice-float__card">
+        <div class="notice-float__message">
+          <p class="notice-float__title"><strong>**신규개업 이벤트!!**</strong></p>
+          <ol class="notice-float__list">
+            <li>4~5월 적극적인 추천으로 미팅&계약 발생시 계약된 회사 한곳 당 최대 150만원 소개 감사비용 지급!</li>
+            <li>4~5월 계약 진행시 계약금의 10% 할인!</li>
+          </ol>
+          <p class="notice-float__foot">
+            -자세한 내용은 <a class="notice-float__notice-link" href="notice.html">"공지사항"</a>을 확인해주세요-
+          </p>
+        </div>
+        <div class="notice-float__actions">
+          <button class="notice-float__btn notice-float__btn--primary" id="notice-float-close" type="button">닫기</button>
+        </div>
+      </div>
     </aside>
 
     <!-- AR 활성화 중에도 보이는 UI 오버레이 -->
@@ -66,6 +76,7 @@
       <header class="header">
         <h1 class="logo"><a href="#" class="logo-refresh" onclick="location.reload(); return false;">SP<span class="logo-e">E</span>CIA</a></h1>
         <p class="tagline">고객의 프로젝트 완성을 위해 최선을 다하겠습니다!</p>
+        <a class="navbar-login" href="login.html">로그인</a>
       </header>
 
       <div class="bottom-group">
@@ -89,10 +100,70 @@
             </svg>
             <span>AR페이지</span>
           </a>
+          <a href="notice.html" class="action-btn" id="btn-notice">
+            <svg class="action-icon action-icon-notice" viewBox="0 0 24 24" aria-hidden="true">
+              <path fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2z"/>
+              <path fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" d="M18 16v-5a6 6 0 10-12 0v5l-2 2h16l-2-2z"/>
+            </svg>
+            <span>공지사항</span>
+          </a>
         </nav>
         <footer class="footer">
           <p>핀치로 확대·축소 · 드래그로 회전</p>
         </footer>
+      </div>
+    </div>
+  </div>
+
+  <!-- 로그인/회원가입 모달 -->
+  <div class="auth-modal" id="auth-modal" role="dialog" aria-modal="true" aria-label="로그인 또는 회원가입">
+    <div class="auth-card">
+      <div class="auth-tabs" role="tablist" aria-label="인증 탭">
+        <button class="auth-tab is-active" id="auth-tab-login" type="button" role="tab" aria-selected="true">로그인</button>
+        <button class="auth-tab" id="auth-tab-signup" type="button" role="tab" aria-selected="false">회원가입</button>
+      </div>
+      <div class="auth-body">
+        <div class="auth-title" id="auth-title">로그인</div>
+
+        <form class="auth-form" id="auth-form-login">
+          <div class="auth-row">
+            <label class="auth-label" for="auth-login-email">이메일</label>
+            <input class="auth-input" id="auth-login-email" type="email" autocomplete="email" required>
+          </div>
+          <div class="auth-row">
+            <label class="auth-label" for="auth-login-password">비밀번호</label>
+            <input class="auth-input" id="auth-login-password" type="password" autocomplete="current-password" required>
+          </div>
+          <div class="auth-actions">
+            <button class="auth-btn" id="auth-cancel" type="button">닫기</button>
+            <button class="auth-btn auth-btn--primary" id="auth-login-submit" type="submit">로그인</button>
+          </div>
+          <div class="auth-msg" id="auth-msg-login" aria-live="polite"></div>
+        </form>
+
+        <form class="auth-form" id="auth-form-signup" style="display:none;">
+          <div class="auth-row">
+            <label class="auth-label" for="auth-signup-name">이름</label>
+            <input class="auth-input" id="auth-signup-name" type="text" autocomplete="name" required>
+          </div>
+          <div class="auth-row">
+            <label class="auth-label" for="auth-signup-phone">전화번호</label>
+            <input class="auth-input" id="auth-signup-phone" type="tel" autocomplete="tel" required>
+          </div>
+          <div class="auth-row">
+            <label class="auth-label" for="auth-signup-email">이메일</label>
+            <input class="auth-input" id="auth-signup-email" type="email" autocomplete="email" required>
+          </div>
+          <div class="auth-row">
+            <label class="auth-label" for="auth-signup-password">비밀번호 (8자 이상)</label>
+            <input class="auth-input" id="auth-signup-password" type="password" autocomplete="new-password" required>
+          </div>
+          <div class="auth-actions">
+            <button class="auth-btn" id="auth-cancel-2" type="button">닫기</button>
+            <button class="auth-btn auth-btn--primary" id="auth-signup-submit" type="submit">회원가입</button>
+          </div>
+          <div class="auth-msg" id="auth-msg-signup" aria-live="polite"></div>
+        </form>
       </div>
     </div>
   </div>
@@ -113,5 +184,6 @@
   })();
   </script>
   <script type="module" src="/script.js"></script>
+  <script type="module" src="/auth.js"></script>
 </body>
 </html>

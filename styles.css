@@ -41,81 +41,102 @@ html, body {
 /* 메인 플로팅 공지사항 */
 .notice-float {
   position: fixed;
-  left: 12px;
-  right: 12px;
-  top: calc(env(safe-area-inset-top) + 10px);
+  inset: 0;
   z-index: 30;
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 10px 10px;
-  border-radius: 16px;
-  background: rgba(18, 18, 28, 0.78);
-  border: 1px solid var(--border-subtle);
-  backdrop-filter: blur(12px);
-  box-shadow: var(--shadow-glow);
-}
-
-.notice-float__link {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  text-decoration: none;
-  color: var(--text-primary);
-  min-width: 0;
-}
-
-.notice-float__badge {
-  display: inline-flex;
-  align-items: center;
   justify-content: center;
-  height: 24px;
-  padding: 0 10px;
-  border-radius: 999px;
-  background: rgba(99, 102, 241, 0.22);
-  border: 1px solid rgba(99, 102, 241, 0.5);
-  color: var(--text-primary);
-  font-size: 0.75rem;
-  font-weight: 700;
-  letter-spacing: 0.02em;
-  flex-shrink: 0;
+  padding: calc(env(safe-area-inset-top) + 12px) 12px calc(env(safe-area-inset-bottom) + 12px);
+  background: rgba(10, 10, 15, 0.35);
+  backdrop-filter: blur(6px);
 }
 
-.notice-float__text {
+.notice-float__card {
+  width: min(420px, 100%);
+  background: rgba(18, 18, 28, 0.82);
+  border: 1px solid var(--border-subtle);
+  border-radius: 18px;
+  box-shadow: var(--shadow-glow);
+  padding: 16px 16px 14px;
+}
+
+.notice-float__message {
+  color: var(--text-primary);
+  line-height: 1.5;
+  text-align: left;
+}
+
+.notice-float__title {
+  text-align: center;
+  font-size: 1.05rem;
+  letter-spacing: 0.01em;
+}
+
+.notice-float__list {
+  margin-top: 10px;
+  padding-left: 18px;
+  color: var(--text-primary);
+  font-size: 0.88rem;
+  font-weight: 500;
+}
+
+.notice-float__list li + li {
+  margin-top: 6px;
+}
+
+.notice-float__foot {
+  margin-top: 10px;
+  text-align: center;
+  color: var(--text-muted);
   font-size: 0.85rem;
   font-weight: 600;
-  color: var(--text-primary);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
 
-.notice-float__chev {
-  flex-shrink: 0;
-  color: var(--text-muted);
-  font-size: 1.25rem;
-  line-height: 1;
+.notice-float__notice-link {
+  color: var(--accent-hover);
+  font-weight: 800;
+  text-decoration: none;
 }
 
-.notice-float__close {
-  width: 34px;
-  height: 34px;
-  border-radius: 12px;
-  border: 1px solid var(--border-subtle);
-  background: rgba(10, 10, 15, 0.35);
-  color: var(--text-primary);
-  cursor: pointer;
-  font-size: 1.25rem;
-  line-height: 1;
-  display: inline-flex;
-  align-items: center;
+.notice-float__notice-link:hover,
+.notice-float__notice-link:focus {
+  text-decoration: underline;
+}
+
+.notice-float__actions {
+  margin-top: 14px;
+  display: flex;
+  gap: 10px;
   justify-content: center;
+}
+
+.notice-float__btn {
+  flex: 1;
+  min-width: 0;
+  padding: 12px 12px;
+  border-radius: 14px;
+  border: 1px solid var(--border-subtle);
+  background: rgba(10, 10, 15, 0.45);
+  color: white;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 0.85rem;
+  font-weight: 700;
   -webkit-tap-highlight-color: transparent;
 }
 
-.notice-float__close:hover {
-  border-color: rgba(99, 102, 241, 0.7);
+.notice-float__btn:hover {
+  border-color: rgba(99, 102, 241, 0.6);
+}
+
+.notice-float__btn--primary {
+  background: rgba(99, 102, 241, 0.9);
+  border-color: rgba(99, 102, 241, 0.9);
+}
+
+.notice-float__btn--primary:hover {
+  background: rgba(129, 140, 248, 0.95);
+  border-color: rgba(129, 140, 248, 0.95);
 }
 
 model-viewer {
@@ -258,6 +279,11 @@ model-viewer .Hotspot {
 .header {
   padding: 16px 20px;
   text-align: center;
+  position: relative;
+}
+
+.navbar-login {
+  display: none;
 }
 
 .logo {
@@ -324,26 +350,36 @@ model-viewer .Hotspot {
 .quick-actions {
   display: flex;
   justify-content: center;
-  gap: 12px;
-  padding: 12px 20px 16px;
+  flex-wrap: nowrap;
+  gap: 8px;
+  padding: 12px 12px 14px;
 }
 
 .action-btn {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 6px;
-  padding: 14px 20px;
-  min-width: 100px;
+  gap: 5px;
+  padding: 12px 10px;
+  min-width: 0;
+  flex: 1 1 0;
   background: var(--bg-card);
   border: 1px solid var(--border-subtle);
   border-radius: 14px;
   color: var(--text-primary);
   text-decoration: none;
-  font-size: 0.8rem;
+  font-size: 0.72rem;
   font-weight: 600;
   backdrop-filter: blur(12px);
   transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
+}
+
+.action-btn span {
+  display: block;
+  max-width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .action-btn:hover,
@@ -355,7 +391,7 @@ model-viewer .Hotspot {
 
 /* 아이콘 영역 높이 통일 → 텍스트(홈페이지/소개영상/AR페이지) 같은 높이 */
 .action-btn > *:first-child {
-  min-height: 28px;
+  min-height: 26px;
   box-sizing: border-box;
 }
 
@@ -371,20 +407,26 @@ model-viewer .Hotspot {
 
 .action-icon-img {
   width: auto;
-  height: 28px;
+  height: 26px;
   object-fit: contain;
   display: block;
 }
 
 .action-icon-youtube {
-  width: 28px;
-  height: 28px;
+  width: 26px;
+  height: 26px;
   flex-shrink: 0;
 }
 
 .action-icon-hologram {
-  width: 28px;
-  height: 28px;
+  width: 26px;
+  height: 26px;
+  flex-shrink: 0;
+}
+
+.action-icon-notice {
+  width: 26px;
+  height: 26px;
   flex-shrink: 0;
 }
 
@@ -423,6 +465,29 @@ model-viewer[ar-status="session-started"] ~ .ui-overlay .ar-hint p {
 
 /* 반응형 - 태블릿 이상 */
 @media (min-width: 768px) {
+  .navbar-login {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    right: 20px;
+    top: 18px;
+    padding: 10px 14px;
+    border-radius: 999px;
+    border: 1px solid var(--border-subtle);
+    background: rgba(18, 18, 28, 0.75);
+    color: var(--text-primary);
+    text-decoration: none;
+    font-weight: 800;
+    font-size: 0.8rem;
+    backdrop-filter: blur(12px);
+  }
+
+  .navbar-login:hover,
+  .navbar-login:focus {
+    border-color: rgba(99, 102, 241, 0.7);
+  }
+
   .logo {
     font-size: 1.75rem;
   }

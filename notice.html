@@ -13,6 +13,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="auth.css">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     html, body {
@@ -23,24 +24,781 @@
       color: #f8fafc;
       overflow: hidden;
     }
+    .navbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 10;
+      padding: calc(env(safe-area-inset-top) + 14px) 20px 12px;
+      text-align: center;
+      background: rgba(10, 10, 15, 0.55);
+      border-bottom: 1px solid rgba(148, 163, 184, 0.2);
+      backdrop-filter: blur(10px);
+    }
+    .navbar-login {
+      display: none;
+    }
+    .logo {
+      font-size: 1.5rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      background: linear-gradient(135deg, #fff 0%, #94a3b8 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .logo-e {
+      -webkit-text-fill-color: #9999CC;
+      color: #9999CC;
+      background: none;
+      background-clip: unset;
+    }
+    .logo-link {
+      color: inherit;
+      text-decoration: none;
+      background: linear-gradient(135deg, #fff 0%, #94a3b8 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .logo-link:hover { opacity: 0.9; }
+    .tagline {
+      margin-top: 2px;
+      font-size: 0.75rem;
+      color: #94a3b8;
+    }
     .wrap {
       min-height: 100dvh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 24px;
-      text-align: center;
+      padding-top: calc(env(safe-area-inset-top) + 86px);
+      padding-left: 14px;
+      padding-right: 14px;
+      padding-bottom: calc(env(safe-area-inset-bottom) + 14px);
+      overflow: auto;
     }
     .muted {
       color: #94a3b8;
       font-size: 0.95rem;
       line-height: 1.5;
     }
+
+    .list-card {
+      width: min(820px, 100%);
+      margin: 0 auto;
+      background: rgba(18, 18, 28, 0.82);
+      border: 1px solid rgba(148, 163, 184, 0.2);
+      border-radius: 18px;
+      box-shadow: 0 0 40px rgba(99, 102, 241, 0.15);
+      backdrop-filter: blur(12px);
+      overflow: hidden;
+    }
+
+    .list-head,
+    .list-row {
+      display: grid;
+      grid-template-columns: 2fr 8fr; /* 작성일:제목 = 2:8 */
+      gap: 10px;
+      padding: 12px 14px;
+      align-items: center;
+    }
+
+    .list-head {
+      background: rgba(10, 10, 15, 0.45);
+      border-bottom: 1px solid rgba(148, 163, 184, 0.2);
+      color: #94a3b8;
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+    }
+
+    .list-row {
+      border-bottom: 1px solid rgba(148, 163, 184, 0.14);
+    }
+
+    .list-row:last-child {
+      border-bottom: none;
+    }
+
+    .col-date {
+      font-size: 0.8rem;
+      color: #94a3b8;
+      white-space: nowrap;
+    }
+
+    .col-title {
+      min-width: 0;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .title-btn {
+      width: 100%;
+      background: transparent;
+      border: 0;
+      color: #f8fafc;
+      font-family: inherit;
+      font-size: 0.9rem;
+      font-weight: 650;
+      text-align: left;
+      cursor: pointer;
+      padding: 0;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      flex: 1 1 auto;
+      min-width: 0;
+    }
+
+    .title-btn:hover,
+    .title-btn:focus {
+      color: #818cf8;
+      outline: none;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+
+    .pagination {
+      width: min(820px, 100%);
+      margin: 12px auto 0;
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      justify-content: center;
+      color: #94a3b8;
+      font-size: 0.8rem;
+    }
+
+    .page-btn {
+      padding: 10px 14px;
+      border-radius: 12px;
+      border: 1px solid rgba(148, 163, 184, 0.25);
+      background: rgba(10, 10, 15, 0.45);
+      color: #f8fafc;
+      cursor: pointer;
+      font-family: inherit;
+      font-weight: 700;
+    }
+
+    .page-btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    /* 상세 모달 (메인 플로팅 공지 스타일) */
+    .detail-modal {
+      position: fixed;
+      inset: 0;
+      z-index: 50;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: calc(env(safe-area-inset-top) + 12px) 12px calc(env(safe-area-inset-bottom) + 12px);
+      background: rgba(10, 10, 15, 0.35);
+      backdrop-filter: blur(6px);
+    }
+
+    .detail-modal.is-open {
+      display: flex;
+    }
+
+    .detail-card {
+      width: min(520px, 100%);
+      background: rgba(18, 18, 28, 0.82);
+      border: 1px solid rgba(148, 163, 184, 0.2);
+      border-radius: 18px;
+      box-shadow: 0 0 40px rgba(99, 102, 241, 0.15);
+      padding: 16px 16px 14px;
+    }
+
+    .detail-title {
+      font-size: 1.05rem;
+      font-weight: 800;
+      text-align: center;
+      margin-bottom: 8px;
+    }
+
+    .detail-meta {
+      text-align: center;
+      color: #94a3b8;
+      font-size: 0.8rem;
+      margin-bottom: 12px;
+    }
+
+    .detail-body {
+      color: #f8fafc;
+      font-size: 0.9rem;
+      line-height: 1.6;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    .detail-actions {
+      margin-top: 14px;
+      display: flex;
+      justify-content: center;
+    }
+
+    .detail-close {
+      width: 100%;
+      padding: 12px 12px;
+      border-radius: 14px;
+      border: 1px solid rgba(129, 140, 248, 0.95);
+      background: rgba(129, 140, 248, 0.95);
+      color: white;
+      cursor: pointer;
+      font-family: inherit;
+      font-size: 0.9rem;
+      font-weight: 800;
+    }
+
+    .admin-bar {
+      width: min(820px, 100%);
+      margin: 0 auto 10px;
+      display: none;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .admin-badge {
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(99, 102, 241, 0.22);
+      border: 1px solid rgba(99, 102, 241, 0.5);
+      color: #f8fafc;
+      font-size: 0.78rem;
+      font-weight: 900;
+    }
+
+    .admin-actions {
+      display: flex;
+      gap: 10px;
+      justify-content: flex-end;
+      flex-wrap: wrap;
+    }
+
+    .admin-btn {
+      padding: 10px 14px;
+      border-radius: 14px;
+      border: 1px solid rgba(148, 163, 184, 0.25);
+      background: rgba(10, 10, 15, 0.45);
+      color: #f8fafc;
+      cursor: pointer;
+      font-family: inherit;
+      font-weight: 900;
+      font-size: 0.85rem;
+    }
+
+    .admin-btn--primary {
+      border-color: rgba(99, 102, 241, 0.95);
+      background: rgba(99, 102, 241, 0.95);
+    }
+
+    .admin-btn--danger {
+      border-color: rgba(248, 113, 113, 0.7);
+      background: rgba(248, 113, 113, 0.25);
+    }
+
+    .row-actions {
+      display: none;
+      gap: 8px;
+      justify-content: flex-end;
+      align-items: center;
+      flex: 0 0 auto;
+    }
+    .row-btn {
+      padding: 8px 10px;
+      border-radius: 12px;
+      border: 1px solid rgba(148, 163, 184, 0.25);
+      background: rgba(10, 10, 15, 0.45);
+      color: #f8fafc;
+      cursor: pointer;
+      font-family: inherit;
+      font-weight: 900;
+      font-size: 0.78rem;
+      white-space: nowrap;
+    }
+    .row-btn--danger {
+      border-color: rgba(248, 113, 113, 0.7);
+      background: rgba(248, 113, 113, 0.2);
+    }
+
+    .editor-modal {
+      position: fixed;
+      inset: 0;
+      z-index: 55;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: calc(env(safe-area-inset-top) + 12px) 12px calc(env(safe-area-inset-bottom) + 12px);
+      background: rgba(10, 10, 15, 0.35);
+      backdrop-filter: blur(6px);
+    }
+    .editor-modal.is-open { display: flex; }
+    .editor-card {
+      width: min(620px, 100%);
+      background: rgba(18, 18, 28, 0.9);
+      border: 1px solid rgba(148, 163, 184, 0.22);
+      border-radius: 18px;
+      box-shadow: 0 0 40px rgba(99, 102, 241, 0.15);
+      padding: 16px 16px 14px;
+    }
+    .editor-title {
+      text-align: center;
+      font-weight: 900;
+      font-size: 1.05rem;
+      margin-bottom: 12px;
+    }
+    .editor-form { display: grid; gap: 10px; }
+    .editor-row { display: grid; gap: 6px; }
+    .editor-label { font-size: 0.78rem; color: #94a3b8; font-weight: 800; }
+    .editor-input, .editor-textarea {
+      width: 100%;
+      padding: 12px 12px;
+      border-radius: 14px;
+      border: 1px solid rgba(148, 163, 184, 0.22);
+      background: rgba(10, 10, 15, 0.45);
+      color: #f8fafc;
+      font-family: inherit;
+      font-weight: 600;
+      outline: none;
+    }
+    .editor-textarea { min-height: 160px; resize: vertical; }
+    .editor-actions {
+      margin-top: 4px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    .editor-msg {
+      margin-top: 10px;
+      text-align: center;
+      font-size: 0.8rem;
+      color: #94a3b8;
+      min-height: 1.4em;
+    }
+    .editor-msg.is-error { color: #fca5a5; }
+    .editor-msg.is-ok { color: #86efac; }
+
+    @media (min-width: 768px) {
+      .navbar { position: fixed; }
+      .navbar-login {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        position: absolute;
+        right: 20px;
+        top: calc(env(safe-area-inset-top) + 18px);
+        padding: 10px 14px;
+        border-radius: 999px;
+        border: 1px solid rgba(148, 163, 184, 0.25);
+        background: rgba(18, 18, 28, 0.75);
+        color: #f8fafc;
+        text-decoration: none;
+        font-weight: 800;
+        font-size: 0.8rem;
+        backdrop-filter: blur(12px);
+      }
+      .navbar-login:hover,
+      .navbar-login:focus {
+        border-color: rgba(99, 102, 241, 0.7);
+      }
+    }
   </style>
 </head>
 <body>
-  <div class="wrap">
-    <p class="muted">공지사항 페이지 (준비중)</p>
+  <header class="navbar">
+    <h1 class="logo">
+      <a class="logo-link" href="index.html">SP<span class="logo-e">E</span>CIA</a>
+    </h1>
+    <p class="tagline">고객의 프로젝트 완성을 위해 최선을 다하겠습니다!</p>
+    <a class="navbar-login" href="login.html">로그인</a>
+  </header>
+  <main class="wrap">
+    <div class="admin-bar" id="admin-bar">
+      <span class="admin-badge">ADMIN</span>
+      <div class="admin-actions">
+        <button class="admin-btn admin-btn--primary" id="btn-notice-add" type="button">공지 추가</button>
+        <button class="admin-btn" id="btn-notice-refresh" type="button">새로고침</button>
+        <button class="admin-btn admin-btn--danger" id="btn-logout" type="button">로그아웃</button>
+      </div>
+    </div>
+
+    <section class="list-card" aria-label="공지사항 목록">
+      <div class="list-head">
+        <div>작성일</div>
+        <div>제목</div>
+      </div>
+      <div id="notice-list"></div>
+    </section>
+
+    <nav class="pagination" aria-label="공지사항 페이지 이동">
+      <button class="page-btn" id="page-prev" type="button">이전</button>
+      <span id="page-status">1 / 1</span>
+      <button class="page-btn" id="page-next" type="button">다음</button>
+    </nav>
+  </main>
+
+  <!-- 상세 보기 모달 -->
+  <div class="detail-modal" id="detail-modal" role="dialog" aria-modal="true" aria-label="공지사항 상세">
+    <div class="detail-card">
+      <div class="detail-title" id="detail-title">제목</div>
+      <div class="detail-meta" id="detail-meta">작성일</div>
+      <div class="detail-body" id="detail-body">내용은 나중에 추가할게.</div>
+      <div class="detail-actions">
+        <button class="detail-close" id="detail-close" type="button">닫기</button>
+      </div>
+    </div>
   </div>
+
+  <!-- 관리자 편집 모달 -->
+  <div class="editor-modal" id="editor-modal" role="dialog" aria-modal="true" aria-label="공지사항 편집">
+    <div class="editor-card">
+      <div class="editor-title" id="editor-title">공지 추가</div>
+      <form class="editor-form" id="editor-form">
+        <div class="editor-row">
+          <label class="editor-label" for="editor-date">작성일</label>
+          <input class="editor-input" id="editor-date" type="date" required>
+        </div>
+        <div class="editor-row">
+          <label class="editor-label" for="editor-title-input">제목</label>
+          <input class="editor-input" id="editor-title-input" type="text" required>
+        </div>
+        <div class="editor-row">
+          <label class="editor-label" for="editor-body">내용</label>
+          <textarea class="editor-textarea" id="editor-body" placeholder="내용은 나중에 추가할게."></textarea>
+        </div>
+        <div class="editor-actions">
+          <button class="admin-btn" id="editor-cancel" type="button">닫기</button>
+          <button class="admin-btn admin-btn--primary" id="editor-save" type="submit">저장</button>
+        </div>
+        <div class="editor-msg" id="editor-msg" aria-live="polite"></div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 로그인/회원가입 모달 -->
+  <div class="auth-modal" id="auth-modal" role="dialog" aria-modal="true" aria-label="로그인 또는 회원가입">
+    <div class="auth-card">
+      <div class="auth-tabs" role="tablist" aria-label="인증 탭">
+        <button class="auth-tab is-active" id="auth-tab-login" type="button" role="tab" aria-selected="true">로그인</button>
+        <button class="auth-tab" id="auth-tab-signup" type="button" role="tab" aria-selected="false">회원가입</button>
+      </div>
+      <div class="auth-body">
+        <div class="auth-title" id="auth-title">로그인</div>
+
+        <form class="auth-form" id="auth-form-login">
+          <div class="auth-row">
+            <label class="auth-label" for="auth-login-email">이메일</label>
+            <input class="auth-input" id="auth-login-email" type="email" autocomplete="email" required>
+          </div>
+          <div class="auth-row">
+            <label class="auth-label" for="auth-login-password">비밀번호</label>
+            <input class="auth-input" id="auth-login-password" type="password" autocomplete="current-password" required>
+          </div>
+          <div class="auth-actions">
+            <button class="auth-btn" id="auth-cancel" type="button">닫기</button>
+            <button class="auth-btn auth-btn--primary" id="auth-login-submit" type="submit">로그인</button>
+          </div>
+          <div class="auth-msg" id="auth-msg-login" aria-live="polite"></div>
+        </form>
+
+        <form class="auth-form" id="auth-form-signup" style="display:none;">
+          <div class="auth-row">
+            <label class="auth-label" for="auth-signup-name">이름</label>
+            <input class="auth-input" id="auth-signup-name" type="text" autocomplete="name" required>
+          </div>
+          <div class="auth-row">
+            <label class="auth-label" for="auth-signup-phone">전화번호</label>
+            <input class="auth-input" id="auth-signup-phone" type="tel" autocomplete="tel" required>
+          </div>
+          <div class="auth-row">
+            <label class="auth-label" for="auth-signup-email">이메일</label>
+            <input class="auth-input" id="auth-signup-email" type="email" autocomplete="email" required>
+          </div>
+          <div class="auth-row">
+            <label class="auth-label" for="auth-signup-password">비밀번호 (8자 이상)</label>
+            <input class="auth-input" id="auth-signup-password" type="password" autocomplete="new-password" required>
+          </div>
+          <div class="auth-actions">
+            <button class="auth-btn" id="auth-cancel-2" type="button">닫기</button>
+            <button class="auth-btn auth-btn--primary" id="auth-signup-submit" type="submit">회원가입</button>
+          </div>
+          <div class="auth-msg" id="auth-msg-signup" aria-live="polite"></div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      var notices = [];
+
+      var pageSize = 10;
+      var page = 1;
+
+      var listEl = document.getElementById('notice-list');
+      var prevBtn = document.getElementById('page-prev');
+      var nextBtn = document.getElementById('page-next');
+      var statusEl = document.getElementById('page-status');
+
+      var modal = document.getElementById('detail-modal');
+      var modalTitle = document.getElementById('detail-title');
+      var modalMeta = document.getElementById('detail-meta');
+      var modalBody = document.getElementById('detail-body');
+      var modalClose = document.getElementById('detail-close');
+
+      var adminBar = document.getElementById('admin-bar');
+      var btnAdd = document.getElementById('btn-notice-add');
+      var btnRefresh = document.getElementById('btn-notice-refresh');
+      var btnLogout = document.getElementById('btn-logout');
+
+      var editorModal = document.getElementById('editor-modal');
+      var editorTitle = document.getElementById('editor-title');
+      var editorForm = document.getElementById('editor-form');
+      var editorDate = document.getElementById('editor-date');
+      var editorTitleInput = document.getElementById('editor-title-input');
+      var editorBody = document.getElementById('editor-body');
+      var editorCancel = document.getElementById('editor-cancel');
+      var editorMsg = document.getElementById('editor-msg');
+
+      var editingId = null;
+
+      function token() {
+        try { return localStorage.getItem('specia_token'); } catch (_) { return null; }
+      }
+      function role() {
+        try { return localStorage.getItem('specia_role'); } catch (_) { return null; }
+      }
+      function isAdmin() {
+        return role() === 'admin';
+      }
+
+      function setEditorMsg(text, kind) {
+        if (!editorMsg) return;
+        editorMsg.textContent = text || '';
+        editorMsg.classList.remove('is-error', 'is-ok');
+        if (kind) editorMsg.classList.add(kind);
+      }
+
+      async function fetchNotices() {
+        const res = await fetch('/api/notices');
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok || !data.ok) throw new Error(data.error || '불러오기에 실패했습니다.');
+        notices = Array.isArray(data.notices) ? data.notices : [];
+      }
+
+      function totalPages() {
+        return Math.max(1, Math.ceil(notices.length / pageSize));
+      }
+
+      function clampPage() {
+        var tp = totalPages();
+        if (page < 1) page = 1;
+        if (page > tp) page = tp;
+      }
+
+      function openModal(item) {
+        modalTitle.textContent = item.title || '제목 없음';
+        modalMeta.textContent = item.date || '';
+        modalBody.textContent = item.body && item.body.trim().length ? item.body : '내용은 나중에 추가할게.';
+        modal.classList.add('is-open');
+      }
+
+      function closeModal() {
+        modal.classList.remove('is-open');
+      }
+
+      function openEditor(mode, item) {
+        editingId = mode === 'edit' ? item.id : null;
+        if (editorTitle) editorTitle.textContent = mode === 'edit' ? '공지 수정' : '공지 추가';
+        if (editorDate) editorDate.value = (item && item.date) ? item.date : '';
+        if (editorTitleInput) editorTitleInput.value = (item && item.title) ? item.title : '';
+        if (editorBody) editorBody.value = (item && item.body) ? item.body : '';
+        setEditorMsg('');
+        editorModal.classList.add('is-open');
+      }
+      function closeEditor() {
+        editorModal.classList.remove('is-open');
+      }
+
+      async function saveNotice() {
+        const t = token();
+        if (!t) throw new Error('로그인이 필요합니다.');
+        const payload = {
+          date: editorDate.value,
+          title: editorTitleInput.value,
+          body: editorBody.value
+        };
+        const url = editingId ? `/api/notices/${editingId}` : '/api/notices';
+        const method = editingId ? 'PUT' : 'POST';
+        const res = await fetch(url, {
+          method,
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${t}`
+          },
+          body: JSON.stringify(payload),
+        });
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok || !data.ok) throw new Error(data.error || '저장에 실패했습니다.');
+      }
+
+      async function deleteNotice(id) {
+        const t = token();
+        if (!t) throw new Error('로그인이 필요합니다.');
+        const res = await fetch(`/api/notices/${id}`, {
+          method: 'DELETE',
+          headers: { 'Authorization': `Bearer ${t}` },
+        });
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok || !data.ok) throw new Error(data.error || '삭제에 실패했습니다.');
+      }
+
+      function render() {
+        clampPage();
+        var tp = totalPages();
+        var start = (page - 1) * pageSize;
+        var slice = notices.slice(start, start + pageSize);
+
+        listEl.innerHTML = '';
+
+        if (!slice.length) {
+          var empty = document.createElement('div');
+          empty.className = 'list-row';
+          empty.innerHTML = '<div class=\"col-date\">-</div><div class=\"col-title\"><span class=\"muted\">등록된 공지사항이 없습니다.</span></div>';
+          listEl.appendChild(empty);
+        } else {
+          slice.forEach(function (item) {
+            var row = document.createElement('div');
+            row.className = 'list-row';
+
+            var d = document.createElement('div');
+            d.className = 'col-date';
+            d.textContent = item.date || '';
+
+            var t = document.createElement('div');
+            t.className = 'col-title';
+
+            var titleBtn = document.createElement('button');
+            titleBtn.type = 'button';
+            titleBtn.className = 'title-btn';
+            titleBtn.textContent = item.title || '';
+            titleBtn.addEventListener('click', function () { openModal(item); });
+            t.appendChild(titleBtn);
+
+            if (isAdmin()) {
+              var actions = document.createElement('div');
+              actions.className = 'row-actions';
+
+              var editBtn = document.createElement('button');
+              editBtn.type = 'button';
+              editBtn.className = 'row-btn';
+              editBtn.textContent = '수정';
+              editBtn.addEventListener('click', function (e) { e.stopPropagation(); openEditor('edit', item); });
+
+              var delBtn = document.createElement('button');
+              delBtn.type = 'button';
+              delBtn.className = 'row-btn row-btn--danger';
+              delBtn.textContent = '삭제';
+              delBtn.addEventListener('click', async function (e) {
+                e.stopPropagation();
+                if (!confirm('이 공지사항을 삭제할까요?')) return;
+                try {
+                  await deleteNotice(item.id);
+                  await fetchNotices();
+                  render();
+                } catch (err) {
+                  alert(err.message || '삭제 실패');
+                }
+              });
+
+              actions.appendChild(editBtn);
+              actions.appendChild(delBtn);
+              t.appendChild(actions);
+              actions.style.display = 'flex';
+            }
+
+            row.appendChild(d);
+            row.appendChild(t);
+            listEl.appendChild(row);
+          });
+        }
+
+        statusEl.textContent = page + ' / ' + tp;
+        prevBtn.disabled = page <= 1;
+        nextBtn.disabled = page >= tp;
+      }
+
+      function refreshAdminUi() {
+        if (adminBar) adminBar.style.display = isAdmin() ? 'flex' : 'none';
+        render();
+      }
+
+      prevBtn.addEventListener('click', function () { page -= 1; render(); });
+      nextBtn.addEventListener('click', function () { page += 1; render(); });
+
+      modalClose.addEventListener('click', closeModal);
+      modal.addEventListener('click', function (e) {
+        // 카드 바깥 클릭 시 닫기
+        if (e.target === modal) closeModal();
+      });
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') closeModal();
+      });
+
+      refreshAdminUi();
+      window.addEventListener('specia:auth-changed', refreshAdminUi);
+
+      btnRefresh && btnRefresh.addEventListener('click', async function () {
+        try { await fetchNotices(); render(); } catch (e) { alert(e.message || '불러오기 실패'); }
+      });
+
+      btnLogout && btnLogout.addEventListener('click', function () {
+        try {
+          localStorage.removeItem('specia_token');
+          localStorage.removeItem('specia_role');
+          localStorage.removeItem('specia_name');
+        } catch (_) {}
+        location.reload();
+      });
+
+      btnAdd && btnAdd.addEventListener('click', function () {
+        openEditor('add', { date: new Date().toISOString().slice(0, 10), title: '', body: '' });
+      });
+
+      editorCancel && editorCancel.addEventListener('click', closeEditor);
+      editorModal && editorModal.addEventListener('click', function (e) { if (e.target === editorModal) closeEditor(); });
+      document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeEditor(); });
+
+      editorForm && editorForm.addEventListener('submit', async function (e) {
+        e.preventDefault();
+        setEditorMsg('', null);
+        try {
+          await saveNotice();
+          setEditorMsg('저장되었습니다.', 'is-ok');
+          await fetchNotices();
+          render();
+          setTimeout(closeEditor, 300);
+        } catch (err) {
+          setEditorMsg(err.message || '저장 실패', 'is-error');
+        }
+      });
+
+      fetchNotices().then(render).catch(function (e) {
+        // API 연결 전에도 페이지가 깨지지 않게 기본 렌더
+        listEl.innerHTML = '';
+        var empty = document.createElement('div');
+        empty.className = 'list-row';
+        empty.innerHTML = '<div class=\"col-date\">-</div><div class=\"col-title\"><span class=\"muted\">공지사항을 불러올 수 없습니다.</span></div>';
+        listEl.appendChild(empty);
+        statusEl.textContent = '1 / 1';
+        prevBtn.disabled = true;
+        nextBtn.disabled = true;
+      });
+    })();
+  </script>
+  <script type="module" src="/auth.js"></script>
 </body>
 </html>

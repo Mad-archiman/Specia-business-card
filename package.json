@@ -3,11 +3,17 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "dev": "vite --host",
+    "dev": "node dev-server.mjs",
+    "dev:vite": "vite --host",
     "build": "vite build",
     "preview": "vite preview --host"
   },
   "dependencies": {
+    "bcryptjs": "^3.0.2",
+    "dotenv": "^16.6.1",
+    "express": "^4.21.2",
+    "jsonwebtoken": "^9.0.2",
+    "mongodb": "^6.20.0",
     "three": "^0.160.0"
   },
   "devDependencies": {
